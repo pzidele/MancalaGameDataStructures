@@ -6,7 +6,9 @@ public class Main {
 	public static void main(String[] args) {
 		// Get user input
 		Scanner keyboard = new Scanner(System.in);
-		System.out.print("Welcome to the Mancala Game! \nPlease enter the name of the first player: ");
+		System.out.print("Welcome to the Mancala Game! "
+				+ "\nPlease enter the names of both players. Initials work best."
+				+ "\nPlease enter the name of the first player: ");
 		String player1 = keyboard.nextLine();
 		System.out.print("Please enter the name of the second player: ");
 		String player2 = keyboard.nextLine();
@@ -23,10 +25,19 @@ public class Main {
 			// whose turn is it
 			System.out.print("\n\nWhich pit would you like to take from? Enter the number: ");
 			int pit = keyboard.nextInt() - 1;
+			while (pit < 0 || pit > 6) {
+				System.out.print("Invalid entry. Enter the pit number: ");
+				pit = keyboard.nextInt() - 1;
+			}
 
 			// current player gets switched in take turn method
 			currPlayer = mancala.takeTurn(pit, currPlayer);
 		}
-		System.out.println("The winner is " + mancala.findWinner().getName());
+		Player winner = mancala.findWinner();		
+
+		System.out.println("The winner is " + winner.getName());
+		System.out.println(winner.getName() + "'s Mancala: " + winner.getMancala());
+		System.out.println(mancala.lost().getName() + "'s Mancala: " + mancala.lost().getMancala());
+		
 	}
 }

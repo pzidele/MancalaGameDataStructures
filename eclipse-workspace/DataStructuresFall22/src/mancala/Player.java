@@ -48,12 +48,13 @@ public class Player {
 	 * @return int index where the Pit is located in the Pit array
 	 */
 	public int getIndex(Pit p) {
+		int num = 0;
 		for (int i = 0; i < pits.length; i++) {
 			if (p.equals(pits[i])) {
-				return i;
+				num = i;
 			}
 		}
-		return 0; // what should we return here?
+		return num; // what should we return here?
 	}
 	
 	/**

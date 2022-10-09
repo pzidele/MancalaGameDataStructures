@@ -2,7 +2,6 @@ package mancala;
 
 import java.util.Scanner;
 
-
 /**
  * This class manages 2 Players
  * provide view of board while game is in progress
@@ -10,20 +9,13 @@ import java.util.Scanner;
  * manages Player turn
  * @author P'nina Zidele
  */
-/**
- * @author P'nina Zidele
- *
- */
 public class MancalaGame {
 	private Player player1;
 	private Player player2;
-	private String[] boardLabels = new String[] {"Pit1", "Pit2", "Pit3", "Pit4", "Pit5", "Pit6"};
+	private String[] boardLabels;
 	private boolean hasWinner;
 	private Player[] players;
 	private Player winner;
-	private Player isEmpty;
-	private int numPebbles;
-	private boolean playerSide = true;
 
 	/**
 	 * @param player1 First Player
@@ -36,11 +28,14 @@ public class MancalaGame {
 		this.players = new Player[2];
 		players[0] = player1;
 		players[1] = player2;
-		//this.boardLabels = boardLabels; // DO I NEED THIS?
+		this.boardLabels = new String[] {"Pit1", "Pit2", "Pit3", "Pit4", "Pit5", "Pit6"};
 		this.hasWinner = false;
 	}
 
-		
+	public Player[] getPlayers() {
+		return this.players;
+	}
+
 	/**
 	 * Uses the rules:
 	 * If you run into your own store, deposit one piece in it.  
@@ -57,20 +52,18 @@ public class MancalaGame {
 		Pit[] pitsArray = player.getPits();
 		Pit[] pitsArray2 = null;
 		Pit pit = player.getPit(p);
-		int numPebbles = player.pickUp(pit); // also sets pit to 0
+		int numPebbles = player.pickUp(pit); // also sets pit that is "picked up" to 0
 		Pit currPit = pitsArray[p];
 		Mancala manc = new Mancala();
-
-		//	int currIndex = player.getIndex(currPit);
-		// don't think I need it, not used in the end
 		boolean go;
-
+		boolean playerSide = true;
 
 		if (player.equals(player1)) {
 			p2 = player2;
 		} else {
 			p2 = player1;
 		}		
+		pitsArray2 = p2.getPits();
 
 		// deposit pebbles around the board starting on your side
 		// have to keep track of:
@@ -79,13 +72,15 @@ public class MancalaGame {
 		// number of pebbles left in your hand
 		while (numPebbles > 0) {
 			for (int i = p+1; i < pitsArray.length; i++) {
-				if (numPebbles != 0) {
+				if (numPebbles != 0 && playerSide == true) {
 					numPebbles--;
 					pitsArray[i].addPebble();
 					currPit = pitsArray[i];
+					playerSide = true;
 				}
 			}
-			if (numPebbles != 0) {
+
+			if (numPebbles != 0 && playerSide == true && player.getIndex(currPit) == 5) {
 				// deposit one in mancala
 				player.addMancala();
 				numPebbles--;
@@ -94,7 +89,7 @@ public class MancalaGame {
 
 			// now move to other side of the board
 			if (numPebbles != 0) {
-				pitsArray2 = p2.getPits();
+				//	pitsArray2 = p2.getPits();
 				for (int i = 0; i < pitsArray2.length; i++) {
 					if (numPebbles != 0) {
 						numPebbles--;
@@ -104,11 +99,15 @@ public class MancalaGame {
 					}
 				}
 			}
-			// now we deal with the last piece: currPit
-			go = checkContinue(currPit, manc, player, pitsArray2);
-			if (go == true) {
-				return player; // player goes again, landed in mancala
+			if (numPebbles == 0) {
+				// now we deal with the last piece: currPit
+				go = checkContinue(currPit, manc, player, pitsArray2, playerSide);
+				if (go == true) {
+					return player; // player goes again, landed in mancala
+				}
 			}
+			playerSide = true;
+			p = player.getIndex(currPit) - 1;
 
 		}
 		return p2; // other player goes
@@ -122,26 +121,25 @@ public class MancalaGame {
 	 * @param pitsArray2 Array of pits of the other player
 	 * @return boolean true if the current player goes again, otherwise returns false
 	 */
-	public boolean checkContinue(Pit currPit, Mancala manc, Player player, Pit[] pitsArray2) {
+	public boolean checkContinue(Pit currPit, Mancala manc, Player player, Pit[] pitsArray2, boolean playerSide) {
 		// now we deal with the last piece: currPit
 		if (currPit != manc) {
 			// if on your side, the current pit without the one we just deposited is 0,
 			// then you get that last piece, and also the one from the pit across
 			if (currPit.getPebbles() -1 == 0 && playerSide == true) {     
 				int index = player.getIndex(currPit);
-				// set the one across to 0, use the index  
-				player.addMancalas(pitsArray2[index].getPebbles()+1);
+				// set the one across to 0, use the index 
+				int num = pitsArray2[5-index].getPebbles()+1;
+				player.addMancalas(num);
 				currPit.setPebbles(0);
-				pitsArray2[index].setPebbles(0);
+				pitsArray2[5-index].setPebbles(0);
 				return false; // don't get another turn
 			} 
 			else {
 				return false; // next player goes
 			}
 		}
-
 		return true; // player goes again
-
 	}
 
 	/**
@@ -165,11 +163,11 @@ public class MancalaGame {
 		if (sum1 == 0 || sum2 == 0) {
 			hasWinner = true;
 			if (sum1 == 0) {
-				isEmpty = player1;
+				// player 1 is empty
 				collectPieces(player2);
 			}
 			else {
-				isEmpty = player2;
+				// player 2 is empty
 				collectPieces(player1);
 			}
 			// player who still has pieces on his side gets all their pieces
@@ -228,7 +226,7 @@ public class MancalaGame {
 			System.out.print(pits2[i].getPebbles() + "      ");
 		}
 		// print players mancala num
-		System.out.print("\n     " + p2.getMancala() + "                                                           " + p.getMancala());
+		System.out.print("\n     " + p2.getMancala() + "                                                         " + p.getMancala());
 
 		// players perspective side: 
 		System.out.println();
@@ -246,7 +244,7 @@ public class MancalaGame {
 		// print perspective mancala label
 		System.out.print(p.getName() + "'s Mancala    ");
 	}
- 
+
 	/**
 	 * Count all the pieces in each store. The winner is the player with the most pieces.
 	 * @return Player returns the player who won the game
@@ -263,8 +261,22 @@ public class MancalaGame {
 		}
 		return winner;
 	}
-	
-	
+
+	public Player lost() {
+		Player lost = null;
+		Player won;
+		for (int i = 0; i < players.length; i++) {
+			if (players[i] == winner) {
+				 won = players[i];
+			}
+			else {
+				lost = players[i];
+			}
+		}
+		return lost;
+	}
+
+
 	/**
 	 * @return boolean value if there is a winner
 	 */

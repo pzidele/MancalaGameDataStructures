@@ -6,7 +6,7 @@ package mancala;
 public class Mancala extends Pit {
 	
 	// pebbles in a mancala
-	private int pebbles;
+	// has the pebbles field from the parent class
 
 	/**
 	 * Mancala constructor, calls parent constructor, passing it 0
@@ -38,10 +38,10 @@ public class Mancala extends Pit {
 	}
 
 	/**
-	 * Add pebbles 
+	 * Add pebbles, call parent class
 	 * @param num Desired int to add 
 	 */
 	public void addPebbles(int num) {
-		pebbles += num;
+		super.addPebbles(num);
 	}
 }

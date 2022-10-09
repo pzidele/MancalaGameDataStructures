@@ -29,6 +29,10 @@ public class Pit {
 		this.pebbles++;
 	}
 	
+	public void addPebbles(int num) {
+		this.pebbles += num;
+	}
+	
 	/**
 	 * get the pebbles from a pit
 	 * @return number of pebbles in a pit
