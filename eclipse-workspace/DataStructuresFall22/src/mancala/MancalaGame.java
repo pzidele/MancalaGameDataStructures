@@ -257,7 +257,9 @@ public class MancalaGame {
 			winner = player2;
 		}
 		else {
-			System.out.println("It's a tie!");
+			//it's a tie
+			Player noWinner = new Player("noWinner");
+			winner = noWinner;
 		}
 		return winner;
 	}

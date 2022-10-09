@@ -33,11 +33,14 @@ public class Main {
 			// current player gets switched in take turn method
 			currPlayer = mancala.takeTurn(pit, currPlayer);
 		}
-		Player winner = mancala.findWinner();		
-
-		System.out.println("The winner is " + winner.getName());
-		System.out.println(winner.getName() + "'s Mancala: " + winner.getMancala());
-		System.out.println(mancala.lost().getName() + "'s Mancala: " + mancala.lost().getMancala());
-		
+		Player winner = mancala.findWinner();
+		if (winner.equals(p1) || winner.equals(p2)) {
+			System.out.println("The winner is " + winner.getName());
+			System.out.println(winner.getName() + "'s Mancala: " + winner.getMancala());
+			System.out.println(mancala.lost().getName() + "'s Mancala: " + mancala.lost().getMancala());
+		}
+		else {
+			System.out.println("It's a tie!");
+		}
 	}
 }
